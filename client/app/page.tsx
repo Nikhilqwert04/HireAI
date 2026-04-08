@@ -295,6 +295,7 @@ export default function Home() {
               </div>
 
               {/* Right Glass Card */}
+              
               <div
                 className={styles.floatCardRight}
                 style={{ transform: `translate(${-mousePos.x * 1.5}px, ${-mousePos.y * 1.5}px)` }}
