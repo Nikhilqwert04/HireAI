@@ -33,6 +33,7 @@ export default function MeetPage() {
   const [textInput, setTextInput] = useState('');
   const [showInput, setShowInput] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const [showEndConfirmModal, setShowEndConfirmModal] = useState(false);
   const [sessionStarted, setSessionStarted] = useState(false);
 
   const transcriptRef = useRef<HTMLDivElement>(null);
@@ -106,10 +107,6 @@ export default function MeetPage() {
         streamRef.current = stream;
         if (videoRef.current) videoRef.current.srcObject = stream;
 
-        // Check for mic specifically to set permission state without locking it permanently
-        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioStream.getTracks().forEach((t) => t.stop());
-        setMicPermission('granted');
       } catch {
         setCamError(true);
       }
@@ -216,6 +213,13 @@ export default function MeetPage() {
         speakText(aiText, () => {
           setStatus('idle');
           statusRef.current = 'idle';
+
+          // Check if interview is finished
+          if (data.status === 'finished' || data.finished) {
+            handleEndSession();
+            return;
+          }
+
           // Auto-restart listening if mic is still on
           if (isListeningRef.current) {
             startRecording();
@@ -412,12 +416,16 @@ export default function MeetPage() {
   const enterFullscreen = () => {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
-      elem.requestFullscreen().catch((err) => console.error(err));
+      elem.requestFullscreen().catch((err) => {
+        console.error('Fullscreen error:', err);
+        setErrorMsg('Failed to enter Fullscreen mode. Please maximize the window manually for the best experience.');
+      });
     }
   };
 
   const startInterview = async () => {
     setShowWarningModal(false);
+    enterFullscreen();
     
     // Request mic permission first if needed
     if (micPermission !== 'granted') {
@@ -430,7 +438,6 @@ export default function MeetPage() {
     setMicOn(true);
     setSessionStarted(true);
     setErrorMsg('');
-    enterFullscreen();
     startRecording();
 
     // Add first AI message if transcript is empty
@@ -444,11 +451,45 @@ export default function MeetPage() {
     }
   };
 
-  // ── Toggle Mic (Now repurposed to handle warning) ──
+  const handleEndSession = useCallback(() => {
+    isListeningRef.current = false;
+    micMutedRef.current = false;
+    setMicOn(false);
+    setMicMuted(false);
+    setSessionStarted(false);
+    setShowEndConfirmModal(false);
+    setStatus('idle');
+    statusRef.current = 'idle';
+    setLiveText('');
+    setErrorMsg('');
+    
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch { /* noop */ }
+    }
+    if (audioStreamRef.current) {
+      audioStreamRef.current.getTracks().forEach((t) => t.stop());
+      audioStreamRef.current = null;
+    }
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      try {
+        audioContextRef.current.close();
+      } catch { /* noop */ }
+      audioContextRef.current = null;
+    }
+    stopSpeaking();
+
+    // Exit fullscreen
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(err => console.error(err));
+    }
+  }, [stopSpeaking]);
+
+  // ── Toggle Mic (Now repurposed to handle warning or end request) ──
   const toggleMic = useCallback(async () => {
     if (micOn) {
-      // User cannot stop the session
-      setErrorMsg("Session in progress. Manual stop is disabled to ensure interview integrity.");
+      setShowEndConfirmModal(true);
       return;
     }
     
@@ -1485,30 +1526,17 @@ export default function MeetPage() {
           activeColor="rgba(167,1,56,0.9)"
           activeTextColor="#ffb2b9"
           danger
-          disabled={micOn}
           onClick={() => {
             if (micOn) {
-              setErrorMsg("You cannot exit the meeting while the session is active.");
+              setShowEndConfirmModal(true);
               return;
-            }
-            stopSpeaking();
-            isListeningRef.current = false;
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-              try {
-                mediaRecorderRef.current.stop();
-              } catch {
-                /* noop */
-              }
-            }
-            if (audioStreamRef.current) {
-              audioStreamRef.current.getTracks().forEach((t) => t.stop());
             }
             if (typeof window !== 'undefined') window.history.back();
           }}
         />
       </nav>
 
-      {/* Warning Modal */}
+      {/* Warning Modal (Start Interview) */}
       {showWarningModal && (
         <div 
           style={{
@@ -1583,6 +1611,78 @@ export default function MeetPage() {
                 }}
               >
                 I Understand, Start
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* End Session Confirmation Modal */}
+      {showEndConfirmModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            backdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 101,
+            padding: '2rem'
+          }}
+        >
+          <div 
+            style={{
+              maxWidth: 460,
+              background: 'rgba(20,20,30,0.9)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '2rem',
+              padding: '2.5rem',
+              textAlign: 'center',
+              boxShadow: '0 0 60px rgba(0,0,0,0.5)'
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '4rem', color: '#ffb2b9', marginBottom: '1.5rem' }}>
+              cancel
+            </span>
+            <h2 style={{ fontSize: '1.750rem', fontWeight: 800, color: '#f6f2fc', marginBottom: '1rem' }}>
+              End Current Session?
+            </h2>
+            <p style={{ color: '#9ca3af', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '2.5rem' }}>
+              Ending the session now may invalidate your current progress. Are you sure you want to terminate the interview?
+            </p>
+            
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setShowEndConfirmModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '1rem',
+                  borderRadius: '1rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#9ca3af',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Keep Going
+              </button>
+              <button 
+                onClick={handleEndSession}
+                style={{
+                  flex: 1.5,
+                  padding: '1rem',
+                  borderRadius: '1rem',
+                  background: 'rgba(167,1,56,0.9)',
+                  border: 'none',
+                  color: 'white',
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Confirm End
               </button>
             </div>
           </div>
