@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 const JOBS = [
@@ -116,6 +117,7 @@ const MiniCalendar = ({
 };
 
 export default function Home() {
+  const router = useRouter();
   const [view, setView] = useState<'landing' | 'dashboard' | 'process' | 'trust' | 'portal'>(
     'landing'
   );
@@ -295,7 +297,6 @@ export default function Home() {
               </div>
 
               {/* Right Glass Card */}
-              
               <div
                 className={styles.floatCardRight}
                 style={{ transform: `translate(${-mousePos.x * 1.5}px, ${-mousePos.y * 1.5}px)` }}
@@ -663,6 +664,7 @@ export default function Home() {
                 <button
                   className={styles.btnPrimaryDark}
                   style={{ marginTop: 'auto', padding: '1rem', fontSize: '1.05rem' }}
+                  onClick={() => router.push('/meet')}
                 >
                   Start AI Interview
                 </button>
