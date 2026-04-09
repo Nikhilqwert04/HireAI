@@ -16,12 +16,6 @@ interface TranscriptItem {
   text: string;
 }
 
-interface Phase {
-  label: string;
-  done: boolean;
-  active: boolean;
-}
-
 export default function MeetPage() {
   const [status, setStatus] = useState<ConversationStatus>('idle');
   const [micOn, setMicOn] = useState(false);
@@ -38,12 +32,8 @@ export default function MeetPage() {
   const [speechReady, setSpeechReady] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [showInput, setShowInput] = useState(false);
-  const [phases, setPhases] = useState<Phase[]>([
-    { label: 'Introduction', done: false, active: true },
-    { label: 'Technical Assessment', done: false, active: false },
-    { label: 'Behavioral Analysis', done: false, active: false },
-    { label: 'Cultural Alignment', done: false, active: false },
-  ]);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false);
 
   const transcriptRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -85,11 +75,12 @@ export default function MeetPage() {
     elapsedRef.current = elapsed;
   }, [elapsed]);
 
-  // ── Timer ──
+  // ── Timer (Starts when session begins) ──
   useEffect(() => {
+    if (!sessionStarted) return;
     const interval = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [sessionStarted]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -137,17 +128,7 @@ export default function MeetPage() {
     }
   }, [transcript, liveText]);
 
-  // ── Advance phases based on question count ──
-  const advancePhase = useCallback(() => {
-    const count = questionCount.current;
-    setPhases((prev) =>
-      prev.map((p, i) => ({
-        ...p,
-        done: i < Math.min(Math.floor(count / 3), prev.length - 1),
-        active: i === Math.min(Math.floor(count / 3), prev.length - 1),
-      }))
-    );
-  }, []);
+
 
   // ── Stop AI speech ──
   const stopSpeaking = useCallback(() => {
@@ -222,7 +203,6 @@ export default function MeetPage() {
         lastQuestionRef.current = aiText;
 
         questionCount.current++;
-        advancePhase();
 
         setTranscript((prev) => [
           ...prev,
@@ -260,7 +240,7 @@ export default function MeetPage() {
         }
       }
     },
-    [advancePhase, speakText]
+    [speakText]
   );
 
   // ── Start Recording via MediaRecorder + Groq Whisper ──
@@ -429,52 +409,51 @@ export default function MeetPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callBackend]);
 
-  // ── Toggle Mic ──
+  const enterFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch((err) => console.error(err));
+    }
+  };
+
+  const startInterview = async () => {
+    setShowWarningModal(false);
+    
+    // Request mic permission first if needed
+    if (micPermission !== 'granted') {
+      const granted = await requestMicPermission();
+      if (!granted) return;
+    }
+
+    // Turn on
+    isListeningRef.current = true;
+    setMicOn(true);
+    setSessionStarted(true);
+    setErrorMsg('');
+    enterFullscreen();
+    startRecording();
+
+    // Add first AI message if transcript is empty
+    if (transcript.length === 0) {
+      const intro = "Welcome to your HireAI interview. I will be your interviewer today. Please start by introducing yourself.";
+      setTranscript([{ speaker: 'HireAI', time: getCurrentTime(), type: 'ai', text: intro }]);
+      speakText(intro, () => {
+         setStatus('listening');
+         statusRef.current = 'listening';
+      });
+    }
+  };
+
+  // ── Toggle Mic (Now repurposed to handle warning) ──
   const toggleMic = useCallback(async () => {
     if (micOn) {
-      // Turn off
-      isListeningRef.current = false;
-      micMutedRef.current = false;
-      setMicOn(false);
-      setMicMuted(false);
-      setStatus('idle');
-      statusRef.current = 'idle';
-      setLiveText('');
-      setErrorMsg('');
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-        try {
-          mediaRecorderRef.current.stop();
-        } catch {
-          /* noop */
-        }
-      }
-      if (audioStreamRef.current) {
-        audioStreamRef.current.getTracks().forEach((t) => t.stop());
-        audioStreamRef.current = null;
-      }
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        try {
-          audioContextRef.current.close();
-        } catch {
-          /* noop */
-        }
-        audioContextRef.current = null;
-      }
-      stopSpeaking();
-    } else {
-      // Request mic permission first if needed
-      if (micPermission !== 'granted') {
-        const granted = await requestMicPermission();
-        if (!granted) return;
-      }
-
-      // Turn on
-      isListeningRef.current = true;
-      setMicOn(true);
-      setErrorMsg('');
-      startRecording();
+      // User cannot stop the session
+      setErrorMsg("Session in progress. Manual stop is disabled to ensure interview integrity.");
+      return;
     }
-  }, [micOn, micPermission, requestMicPermission, startRecording, stopSpeaking]);
+    
+    setShowWarningModal(true);
+  }, [micOn]);
 
   // ── Toggle Mute (audio track only — never touches AI status) ──
   const toggleMute = useCallback(() => {
@@ -846,7 +825,7 @@ export default function MeetPage() {
               <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>
                 {tab === 'transcript' ? 'description' : 'analytics'}
               </span>
-              {tab === 'transcript' ? 'Transcript' : 'Progress'}
+              {tab === 'transcript' ? 'Transcript' : 'Stats'}
             </button>
           ))}
         </div>
@@ -965,64 +944,9 @@ export default function MeetPage() {
             </>
           ) : (
             <div style={{ paddingTop: '0.5rem' }}>
-              <p
-                style={{
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
-                  color: '#4b5563',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  marginBottom: '1.25rem',
-                }}
-              >
-                Interview Progress
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                {phases.map((phase, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-                    <div
-                      style={{
-                        width: 18,
-                        height: 18,
-                        borderRadius: '50%',
-                        flexShrink: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: phase.done ? '#00eefc' : 'transparent',
-                        border: phase.active
-                          ? '2px solid #00eefc'
-                          : phase.done
-                            ? 'none'
-                            : '1px solid #374151',
-                        animation: phase.active ? 'pulse 2s infinite' : 'none',
-                      }}
-                    >
-                      {phase.done && (
-                        <span
-                          className="material-symbols-outlined"
-                          style={{ fontSize: '0.7rem', color: '#0e0e14', fontWeight: 700 }}
-                        >
-                          check
-                        </span>
-                      )}
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        color: phase.done || phase.active ? '#f6f2fc' : '#4b5563',
-                        fontWeight: phase.active ? 700 : 400,
-                      }}
-                    >
-                      {phase.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
 
               <div
                 style={{
-                  marginTop: '2rem',
                   padding: '1rem',
                   borderRadius: '1rem',
                   background: 'rgba(219,144,255,0.06)',
@@ -1522,11 +1446,11 @@ export default function MeetPage() {
         }}
       >
         <DockButton
-          label={micOn ? 'Mute' : 'Unmute'}
-          icon={micOn ? 'mic' : 'mic_off'}
+          label={micOn ? 'Session Active' : 'Start Interview'}
+          icon={micOn ? 'fiber_manual_record' : 'play_arrow'}
           active={micOn}
-          activeColor={status === 'listening' ? 'rgba(0,238,252,0.25)' : 'rgba(34,211,238,0.2)'}
-          activeTextColor={status === 'listening' ? '#00eefc' : '#22d3ee'}
+          activeColor="rgba(34,211,238,0.2)"
+          activeTextColor="#22d3ee"
           onClick={toggleMic}
           pulsing={status === 'listening'}
         />
@@ -1561,7 +1485,12 @@ export default function MeetPage() {
           activeColor="rgba(167,1,56,0.9)"
           activeTextColor="#ffb2b9"
           danger
+          disabled={micOn}
           onClick={() => {
+            if (micOn) {
+              setErrorMsg("You cannot exit the meeting while the session is active.");
+              return;
+            }
             stopSpeaking();
             isListeningRef.current = false;
             if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
@@ -1578,6 +1507,87 @@ export default function MeetPage() {
           }}
         />
       </nav>
+
+      {/* Warning Modal */}
+      {showWarningModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            backdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: '2rem'
+          }}
+        >
+          <div 
+            style={{
+              maxWidth: 500,
+              background: 'rgba(20,20,30,0.9)',
+              border: '1px solid rgba(255,85,85,0.3)',
+              borderRadius: '2rem',
+              padding: '2.5rem',
+              textAlign: 'center',
+              boxShadow: '0 0 60px rgba(255,85,85,0.15)'
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '4rem', color: '#ff5555', marginBottom: '1.5rem' }}>
+              warning
+            </span>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f6f2fc', marginBottom: '1rem' }}>
+              Interview Integrity Warning
+            </h2>
+            <div style={{ textAlign: 'left', color: '#9ca3af', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+              <p style={{ marginBottom: '1rem' }}>
+                By starting this interview, you agree to the following conditions:
+              </p>
+              <ul style={{ paddingLeft: '1.2rem', gap: '0.5rem', display: 'flex', flexDirection: 'column' }}>
+                <li>This session will be recorded and analyzed by AI for assessment.</li>
+                <li><strong>Manual interruption or stopping is disabled</strong> until the interview reaches its natural conclusion.</li>
+                <li>Exiting or refreshing the browser may result in immediate disqualification.</li>
+                <li>The browser will enter <strong>Full Screen Mode</strong> for the duration of the interview.</li>
+              </ul>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={() => setShowWarningModal(false)}
+                style={{
+                  flex: 1,
+                  padding: '1rem',
+                  borderRadius: '1rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#9ca3af',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={startInterview}
+                style={{
+                  flex: 2,
+                  padding: '1rem',
+                  borderRadius: '1rem',
+                  background: 'linear-gradient(135deg, #7b3bed, #ff5555)',
+                  border: 'none',
+                  color: 'white',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  boxShadow: '0 10px 20px rgba(123,59,237,0.3)'
+                }}
+              >
+                I Understand, Start
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
