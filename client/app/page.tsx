@@ -66,55 +66,6 @@ const RevealOnScroll = ({ children }: { children: ReactNode }) => {
 };
 
 // Interactive Miniature Calendar Component for portal
-const MiniCalendar = ({
-  today,
-  deadlineDay,
-  monthLabel,
-}: {
-  today: number;
-  deadlineDay: number;
-  monthLabel: string;
-}) => {
-  const daysInMonth = 30; // Mock 30 days
-  const startOffset = 2; // Start on Tuesday for visualization
-
-  return (
-    <div className={styles.calendarWrapper}>
-      <div className={styles.calHeader}>{monthLabel}</div>
-      <div className={styles.calGrid}>
-        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((d) => (
-          <div key={d} className={styles.calDayLabel}>
-            {d}
-          </div>
-        ))}
-
-        {Array.from({ length: startOffset }).map((_, i) => (
-          <div key={`offset-${i}`} />
-        ))}
-
-        {Array.from({ length: daysInMonth }).map((_, i) => {
-          const day = i + 1;
-          const isWindow = day >= today && day < deadlineDay;
-          const isDeadline = day === deadlineDay;
-
-          let dayClass = styles.calDay;
-          if (isWindow) dayClass += ` ${styles.calWindow}`;
-          if (isDeadline) dayClass += ` ${styles.calDeadline}`;
-
-          let tooltip = '';
-          if (isWindow) tooltip = 'Interview Available';
-          if (isDeadline) tooltip = 'Final Deadline';
-
-          return (
-            <div key={day} className={dayClass} title={tooltip}>
-              {day}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
 export default function Home() {
   const router = useRouter();
@@ -132,6 +83,10 @@ export default function Home() {
 
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedRoleType, setSelectedRoleType] = useState('Full Time');
+  const [isDragging, setIsDragging] = useState(false);
 
   // Mouse interaction state for the background blob parallax effect
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -651,19 +606,22 @@ export default function Home() {
               {/* Phase 1 Schedule */}
               <div
                 className={styles.portalCard}
-                style={{ display: 'flex', flexDirection: 'column' }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}
               >
-                <h2>Phase 1: AI Interview Round</h2>
-                <p style={{ color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                <h2 style={{ marginBottom: '0.5rem' }}>Phase 1: AI Interview Round</h2>
+                <p style={{ color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '1.5rem', maxWidth: '300px' }}>
                   You can give your technical interview anytime until the deadline date highlighted
                   below.
                 </p>
 
-                <MiniCalendar today={10} deadlineDay={15} monthLabel="This Week" />
+                <div className={styles.deadlineNotice} style={{ width: '100%', marginBottom: '2rem' }}>
+                  <span className={styles.deadlineLabel}>Current Deadline</span>
+                  <h4 className={styles.deadlineDate}>25th April, 2026</h4>
+                </div>
 
                 <button
                   className={styles.btnPrimaryDark}
-                  style={{ marginTop: 'auto', padding: '1rem', fontSize: '1.05rem' }}
+                  style={{ width: '100%', padding: '1.25rem', fontSize: '1.05rem', borderRadius: '3rem' }}
                   onClick={() => router.push('/meet')}
                 >
                   Start AI Interview
@@ -815,64 +773,165 @@ export default function Home() {
         </div>
       )}
 
-      {/* UPLOAD MODAL */}
+      {/* JOB DETAILS LARGE MODAL */}
       {selectedJob && view === 'dashboard' && (
         <div className={styles.modalOverlay}>
-          <div className={styles.loginModalCard} style={{ maxWidth: '600px', textAlign: 'left' }}>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div className={styles.jobOverviewModal}>
+            <div className={styles.modalHeader}>
+              <div>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: '700', marginBottom: '0.1rem' }}>
+                  {selectedJob.title}
+                </h2>
+                <div style={{ display: 'flex', gap: '0.3rem' }}>
+                  {selectedJob.skills.map((s: string) => (
+                    <span key={s} className={styles.skillPill} style={{ padding: '0.2rem 0.5rem', fontSize: '0.65rem' }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
               <button
-                onClick={() => setSelectedJob(null)}
+                onClick={() => {
+                  setSelectedJob(null);
+                  setSelectedCalendarDay(null);
+                  setIsDropdownOpen(false);
+                }}
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#a1a1aa',
-                  fontSize: '1.5rem',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '50%',
+                  fontSize: '1.2rem',
                   cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 ✕
               </button>
             </div>
-            <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>
-              Apply for {selectedJob.title}
-            </h2>
-            <p style={{ color: '#8b949e', marginBottom: '2rem' }}>
-              Submit your resume to get started.
-            </p>
 
-            <div className={styles.uploadBox}>
-              <input
-                type="file"
-                accept=".pdf,.jpg,.png"
-                id="resumeUpload"
-                style={{ display: 'none' }}
-                onChange={(e) => {
-                  if (e.target.files && e.target.files.length > 0) setFile(e.target.files[0]);
-                }}
-              />
-              <label htmlFor="resumeUpload" style={{ cursor: 'pointer', display: 'block' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>📄</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: '600' }}>Upload Resume</div>
-                <div style={{ color: '#a1a1aa', fontSize: '0.9rem' }}>PDF, DOCX format</div>
-              </label>
-            </div>
-
-            {file && (
-              <div
-                style={{
-                  padding: '1rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  borderRadius: '1rem',
-                  marginBottom: '2rem',
-                }}
-              >
-                Selected: <strong>{file.name}</strong>
+            <div className={styles.modalBodyLayout}>
+              {/* Left Column: Description (70% width, scrollable) */}
+              <div className={styles.descriptionSection}>
+                <div>
+                  <h3 className={styles.sectionTitle}>
+                    <span>📝</span> Job Description
+                  </h3>
+                  <p style={{ color: '#a1a1aa', lineHeight: '1.8', fontSize: '1.05rem' }}>
+                    {selectedJob.desc}
+                    <br />
+                    <br />
+                    As an {selectedJob.title}, you will be part of a high-performance team dedicated
+                    to excellence. We value innovation, transparency, and a passion for technology.
+                    This role offers significant growth potential and the opportunity to work on
+                    world-class projects that impact millions.
+                    <br />
+                    <br />
+                    <strong>Key Responsibilities:</strong>
+                    <ul
+                      style={{
+                        marginTop: '1rem',
+                        paddingLeft: '1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <li>Drive mission-critical architectural decisions.</li>
+                      <li>Collaborate with cross-functional teams to deliver scale.</li>
+                      <li>Mentor junior engineers and promote best practices.</li>
+                      <li>Contribute to the open-source community around our core tech.</li>
+                    </ul>
+                    <br />
+                    <strong>Requirements:</strong>
+                    <ul
+                      style={{
+                        marginTop: '1rem',
+                        paddingLeft: '1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <li>5+ years of experience in the relevant domain.</li>
+                      <li>Strong understanding of distributed systems and cloud architecture.</li>
+                      <li>Excellent communication and leadership skills.</li>
+                      <li>Ability to thrive in a fast-paced, agile environment.</li>
+                    </ul>
+                  </p>
+                </div>
               </div>
-            )}
 
-            <button className={styles.btnPrimaryDark} onClick={handleJobApplySubmit}>
-              Submit & Track Application
-            </button>
+              {/* Right Column: Actions (30% width, unscrollable) */}
+              <div className={styles.actionSection}>
+                <div className={styles.actionSectionTop}>
+                  <div className={styles.deadlineNotice}>
+                    <span className={styles.deadlineLabel}>Current Deadline</span>
+                    <h4 className={styles.deadlineDate}>25th April, 2026</h4>
+                  </div>
+                </div>
+
+                {/* Bottom Right: Upload & Submit (Fixed) */}
+                <div className={styles.actionSectionBottom} style={{ flex: 1.5 }}>
+                  <div
+                    className={`${styles.interactiveUpload} ${isDragging ? styles.dragActive : ''}`}
+                    style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        setFile(e.dataTransfer.files[0]);
+                      }
+                    }}
+                    onClick={() => document.getElementById('largeResumeUpload')?.click()}
+                  >
+                    <input
+                      type="file"
+                      id="largeResumeUpload"
+                      hidden
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
+                      }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}>
+                      <span style={{ fontSize: '2.5rem' }}>{file ? '✅' : '☁️'}</span>
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontWeight: '700', fontSize: '1rem', marginBottom: '0.2rem' }}>
+                          {file ? file.name : 'Drop Resume Here'}
+                        </p>
+                        <p style={{ fontSize: '0.75rem', color: '#a1a1aa' }}>
+                          Drag & drop or Click to browse
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    className={styles.btnPrimaryDark}
+                    disabled={!file}
+                    style={{
+                      opacity: file ? 1 : 0.5,
+                      cursor: file ? 'pointer' : 'not-allowed',
+                      padding: '1.25rem',
+                      fontSize: '1.1rem',
+                      marginTop: '0.5rem',
+                    }}
+                    onClick={handleJobApplySubmit}
+                  >
+                    🚀 Submit Application
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -3,10 +3,12 @@
     transform: scale(1) translate(0, 0);
     opacity: 0.6;
   }
+
   50% {
     transform: scale(1.05) translate(-2%, 2%);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1) translate(0, 0);
     opacity: 0.6;
@@ -18,86 +20,105 @@
     transform: translateY(-20px);
     filter: brightness(1);
   }
+
   100% {
     transform: translateY(20px);
     filter: brightness(1.2);
   }
 }
+
 @keyframes tickerScroll {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
 }
+
 @keyframes spinRing {
   100% {
     transform: rotate(360deg);
   }
 }
+
 @keyframes spinRingReverse {
   100% {
     transform: rotate(-360deg);
   }
 }
+
 @keyframes float1 {
   from {
     transform: translateY(0);
   }
+
   to {
     transform: translateY(-20px);
   }
 }
+
 @keyframes float2 {
   from {
     transform: translateY(0);
   }
+
   to {
     transform: translateY(-15px);
   }
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 @keyframes progressLoad {
   from {
     width: 0;
   }
 }
+
 @keyframes barGrow {
   from {
     transform: scaleY(0);
   }
+
   to {
     transform: scaleY(1);
   }
 }
+
 @keyframes mockPulse {
   0% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(123, 59, 237, 0.7);
   }
+
   70% {
     transform: scale(1.1);
     box-shadow: 0 0 0 30px rgba(123, 59, 237, 0);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(123, 59, 237, 0);
   }
 }
+
 @keyframes pulseDeadline {
   from {
     box-shadow: 0 0 10px rgba(255, 8, 68, 0.5);
   }
+
   to {
     box-shadow: 0 0 25px rgba(255, 8, 68, 0.8);
   }
@@ -140,19 +161,15 @@
   margin-left: -275px;
   border-radius: 50%;
   background:
-    radial-gradient(
-      circle at 25% 25%,
+    radial-gradient(circle at 25% 25%,
       rgba(255, 255, 255, 0.9) 0%,
       rgba(255, 255, 255, 0.1) 20%,
-      transparent 50%
-    ),
+      transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(0, 242, 254, 0.4) 0%, transparent 50%),
-    radial-gradient(
-      circle at 50% 50%,
+    radial-gradient(circle at 50% 50%,
       rgba(123, 59, 237, 0.15) 0%,
       rgba(10, 10, 20, 0.95) 75%,
-      #000 100%
-    );
+      #000 100%);
   box-shadow:
     inset -30px -30px 60px rgba(0, 0, 0, 0.9),
     inset 30px 30px 60px rgba(255, 255, 255, 0.15),
@@ -164,6 +181,7 @@
   animation: floatOrb 8s ease-in-out infinite alternate;
   will-change: transform;
 }
+
 .liquidBlob::before {
   content: '';
   position: absolute;
@@ -177,6 +195,7 @@
   border-bottom-color: rgba(0, 242, 254, 0.7);
   animation: spinRing 20s linear infinite;
 }
+
 .liquidBlob::after {
   content: '';
   position: absolute;
@@ -208,6 +227,7 @@
   position: relative;
   z-index: 50;
 }
+
 .logo {
   font-size: 1.6rem;
   font-weight: 800;
@@ -217,6 +237,7 @@
   align-items: center;
   gap: 0.8rem;
 }
+
 .navLinks {
   display: flex;
   gap: 2.5rem;
@@ -226,6 +247,7 @@
   padding: 0.5rem 2rem;
   border-radius: 3rem;
 }
+
 .navLink {
   color: #a1a1aa;
   font-size: 0.95rem;
@@ -236,19 +258,23 @@
   transition: all 0.3s ease;
   padding: 0.5rem 0;
 }
+
 .navLink:hover {
   color: #fff;
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
+
 .navLinkActive {
   color: #fff;
   font-weight: 600;
 }
+
 .navRight {
   display: flex;
   gap: 1.5rem;
   align-items: center;
 }
+
 .btnLogin,
 .btnSignup {
   padding: 0.6rem 1.8rem;
@@ -257,21 +283,25 @@
   cursor: pointer;
   transition: all 0.3s;
 }
+
 .btnLogin {
   background: none;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #fff;
 }
+
 .btnLogin:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.4);
 }
+
 .btnSignup {
   background: #fff;
   color: #000;
   border: none;
   box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
+
 .btnSignup:hover {
   background: #e2e8f0;
   transform: translateY(-2px);
@@ -284,6 +314,7 @@
   flex-direction: column;
   width: 100%;
 }
+
 .heroSection {
   min-height: 85vh;
   position: relative;
@@ -294,6 +325,7 @@
   z-index: 10;
   animation: fadeIn 0.6s ease;
 }
+
 .heroTitle {
   font-size: 5.5rem;
   line-height: 1.1;
@@ -306,6 +338,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .heroSubtitle {
   font-size: 1.15rem;
   color: #a1a1aa;
@@ -314,6 +347,7 @@
   line-height: 1.6;
   margin-bottom: 3rem;
 }
+
 .btnCta {
   background: #fff;
   color: #000;
@@ -326,6 +360,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
 }
+
 .btnCta:hover {
   transform: translateY(-3px);
   box-shadow: 0 15px 40px rgba(255, 255, 255, 0.35);
@@ -345,20 +380,24 @@
   will-change: transform;
   transition: transform 0.1s linear;
 }
+
 .floatCardLeft {
   top: 45%;
   left: 12%;
 }
+
 .floatCardRight {
   top: 55%;
   right: 12%;
 }
+
 .fcLabel {
   font-size: 0.8rem;
   color: #a1a1aa;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 .fcTitle {
   font-size: 1.15rem;
   font-weight: 600;
@@ -366,12 +405,14 @@
   margin-bottom: 0.5rem;
   line-height: 1.4;
 }
+
 .fcStat {
   font-size: 2.8rem;
   font-weight: 700;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
 }
+
 .fcBarBg {
   height: 4px;
   background: rgba(255, 255, 255, 0.1);
@@ -379,6 +420,7 @@
   overflow: hidden;
   margin-top: 1rem;
 }
+
 .fcBarFill {
   height: 100%;
   width: 96%;
@@ -395,6 +437,7 @@
     transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
+
 .revealWrapper.isVisible {
   opacity: 1;
   transform: translateY(0);
@@ -411,6 +454,7 @@
   align-items: center;
   overflow: hidden;
 }
+
 .tickerSection p {
   font-size: 0.8rem;
   letter-spacing: 2px;
@@ -418,6 +462,7 @@
   margin-bottom: 2.5rem;
   text-transform: uppercase;
 }
+
 .tickerLogoContainer {
   display: flex;
   gap: 5rem;
@@ -426,6 +471,7 @@
   animation: tickerScroll 30s linear infinite;
   white-space: nowrap;
 }
+
 .tLogo {
   font-size: 1.8rem;
   font-weight: 800;
@@ -435,6 +481,7 @@
     transform 0.3s;
   cursor: default;
 }
+
 .tLogo:hover {
   color: #fff;
   text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
@@ -450,17 +497,21 @@
   flex-direction: column;
   gap: 12rem;
 }
+
 .featureRow {
   display: flex;
   align-items: center;
   gap: 6rem;
 }
+
 .featureRowReverse {
   flex-direction: row-reverse;
 }
+
 .featureText {
   flex: 1;
 }
+
 .featureText h2 {
   font-size: 3rem;
   margin-bottom: 1.5rem;
@@ -470,6 +521,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 .featureText p {
   font-size: 1.15rem;
   color: #a1a1aa;
@@ -486,6 +538,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .featureVisual::before {
   content: '';
   position: absolute;
@@ -496,6 +549,7 @@
   background: conic-gradient(from 0deg, transparent, rgba(123, 59, 237, 0.4), transparent);
   animation: spinRing 6s linear infinite;
 }
+
 .visualContentInner {
   position: absolute;
   inset: 1px;
@@ -509,6 +563,7 @@
   gap: 1.5rem;
   overflow: hidden;
 }
+
 .mockBarChart {
   display: flex;
   align-items: flex-end;
@@ -517,6 +572,7 @@
   height: 100%;
   padding-top: 3rem;
 }
+
 .mockBar {
   flex: 1;
   background: linear-gradient(180deg, #7b3bed, rgba(123, 59, 237, 0.1));
@@ -524,6 +580,7 @@
   transform-origin: bottom;
   animation: barGrow 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
 .mockPulseCircle {
   width: 100px;
   height: 100px;
@@ -538,6 +595,7 @@
   padding: 10rem 2rem;
   background: radial-gradient(circle at center, rgba(123, 59, 237, 0.1) 0%, transparent 60%);
 }
+
 .finalCtaSection h2 {
   font-size: 4rem;
   margin-bottom: 2.5rem;
@@ -555,10 +613,12 @@
   position: relative;
   z-index: 10;
 }
+
 .pageHeader {
   margin-bottom: 4rem;
   text-align: center;
 }
+
 .pageTitle {
   font-size: 3.5rem;
   font-weight: 700;
@@ -574,6 +634,7 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2.5rem;
 }
+
 .jobCard {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(20px);
@@ -587,6 +648,7 @@
   display: flex;
   flex-direction: column;
 }
+
 .jobCard::before {
   content: '';
   position: absolute;
@@ -597,33 +659,41 @@
   opacity: 0.8;
   transition: height 0.4s ease;
 }
+
 .jobCard:hover {
   transform: translateY(-8px);
   border-color: rgba(255, 255, 255, 0.2);
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
 }
+
 .jobCard:hover::before {
   height: 6px;
 }
+
 .colorPink::before {
   background: linear-gradient(90deg, #ff0844, #ffb199);
 }
+
 .colorBlue::before {
   background: linear-gradient(90deg, #00c6ff, #0072ff);
 }
+
 .colorGreen::before {
   background: linear-gradient(90deg, #11998e, #38ef7d);
 }
+
 .colorPurple::before {
   background: linear-gradient(90deg, #b06ab3, #4568dc);
 }
+
 .jobTitle {
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   line-height: 1.2;
 }
+
 .jobDesc {
   color: #a1a1aa;
   font-size: 0.95rem;
@@ -631,11 +701,13 @@
   margin-bottom: 2rem;
   flex: 1;
 }
+
 .skillsContainer {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+
 .skillPill {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -645,6 +717,7 @@
   color: #fff;
   transition: all 0.3s ease;
 }
+
 .jobCard:hover .skillPill {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.3);
@@ -656,6 +729,7 @@
   grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: 2rem;
 }
+
 .portalCard {
   background: rgba(255, 255, 255, 0.015);
   backdrop-filter: blur(16px);
@@ -666,12 +740,14 @@
   display: flex;
   flex-direction: column;
 }
+
 .portalCard:hover {
   background: rgba(255, 255, 255, 0.03);
   transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.15);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
 }
+
 .portalCard h2 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -679,9 +755,11 @@
   padding-bottom: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .anItem {
   margin-bottom: 1.5rem;
 }
+
 .anLabel {
   display: flex;
   justify-content: space-between;
@@ -689,6 +767,7 @@
   color: #a1a1aa;
   margin-bottom: 0.5rem;
 }
+
 .anBarBg {
   width: 100%;
   height: 6px;
@@ -696,66 +775,37 @@
   border-radius: 3px;
   overflow: hidden;
 }
+
 .anBarFill {
   height: 100%;
   border-radius: 3px;
   animation: progressLoad 1.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Calendar */
-.calendarWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.calHeader {
-  font-size: 1.1rem;
-  font-weight: 600;
+/* Deadline Notice Layout */
+.deadlineNotice {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.25rem;
+  border-radius: 1rem;
   text-align: center;
-  color: #e2e8f0;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
-.calGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
-}
-.calDay,
-.calDayLabel {
-  text-align: center;
-  font-size: 0.85rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-}
-.calDayLabel {
-  color: #8b949e;
-  font-weight: 600;
+
+.deadlineLabel {
   font-size: 0.75rem;
   text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #7b3bed;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.5rem;
 }
-.calDay {
-  border: 1px solid transparent;
-  cursor: pointer;
-  color: #a1a1aa;
-  transition: all 0.2s;
-}
-.calDay:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+
+.deadlineDate {
+  font-size: 1.3rem;
+  font-weight: 800;
   color: #fff;
-}
-.calWindow {
-  background: rgba(123, 59, 237, 0.15);
-  border-color: rgba(123, 59, 237, 0.3);
-  color: #e2e8f0;
-}
-.calDeadline {
-  background: linear-gradient(135deg, #ff0844, #ffb199) !important;
-  color: #fff !important;
-  font-weight: bold;
-  border-color: transparent !important;
-  box-shadow: 0 0 15px rgba(255, 8, 68, 0.5);
-  transform: scale(1.1);
-  animation: pulseDeadline 2s infinite alternate;
 }
 
 /* Modals & Info Arrays */
@@ -770,6 +820,7 @@
   justify-content: center;
   animation: fadeIn 0.3s ease;
 }
+
 .loginModalCard {
   background: #111218;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -780,6 +831,7 @@
   text-align: center;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9);
 }
+
 .inputField {
   width: 100%;
   background: rgba(0, 0, 0, 0.3);
@@ -793,10 +845,12 @@
   margin-bottom: 1rem;
   box-sizing: border-box;
 }
+
 .inputField:focus {
   border-color: #fff;
   background: rgba(255, 255, 255, 0.05);
 }
+
 .btnPrimaryDark {
   width: 100%;
   background: #fff;
@@ -808,10 +862,217 @@
   cursor: pointer;
   transition: all 0.2s;
 }
+
 .btnPrimaryDark:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
 }
+
+/* Large Job Overview Modal */
+.jobOverviewModal {
+  background: rgba(13, 14, 18, 0.95);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2.5rem;
+  width: 90vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+  animation: modalSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.modalBodyLayout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.descriptionSection {
+  flex: 0.7;
+  padding: 3rem;
+  overflow-y: auto;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.actionSection {
+  flex: 0.3;
+  padding: 1.5rem 2rem;
+  background: rgba(255, 255, 255, 0.005);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar for Description */
+.descriptionSection::-webkit-scrollbar {
+  width: 6px;
+}
+
+.descriptionSection::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.descriptionSection::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.descriptionSection::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.actionSectionTop {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.actionSectionBottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 0.5rem;
+  flex: 1;
+  min-height: 0;
+  /* Ensures children define size or flex handles it */
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.uploadSectionBottom {
+  margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.interactiveUpload {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  padding: 1rem;
+  /* Reduced padding from 2.5rem to save space */
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.interactiveUpload:hover {
+  border-color: #7b3bed;
+  background: rgba(123, 59, 237, 0.05);
+  transform: translateY(-2px);
+}
+
+.interactiveUpload.dragActive {
+  border-color: #00f2fe;
+  background: rgba(0, 242, 254, 0.1);
+}
+
+.customDropdown {
+  width: 100%;
+  position: relative;
+}
+
+.dropdownTrigger {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.25rem;
+  border-radius: 1rem;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dropdownTrigger:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: #1a1b26;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  z-index: 10;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.2s ease;
+}
+
+.dropdownItem {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #a1a1aa;
+}
+
+.dropdownItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.calDay.interactive:hover {
+  background: #7b3bed !important;
+  color: #fff !important;
+  transform: scale(1.1);
+}
+
+.calDay.selected {
+  background: #fff !important;
+  color: #000 !important;
+  font-weight: 700;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
 .uploadBox {
   border: 2px dashed rgba(255, 255, 255, 0.2);
   border-radius: 1rem;
@@ -822,15 +1083,18 @@
   transition: all 0.3s;
   background: rgba(255, 255, 255, 0.02);
 }
+
 .uploadBox:hover {
   border-color: #fff;
   background: rgba(255, 255, 255, 0.08);
 }
+
 .genericGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2.5rem;
 }
+
 .infoCard {
   background: rgba(255, 255, 255, 0.015);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -839,12 +1103,14 @@
   transition: all 0.4s;
   backdrop-filter: blur(16px);
 }
+
 .infoCard:hover {
   background: rgba(255, 255, 255, 0.04);
   transform: translateY(-8px);
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
+
 .iconWrapper {
   font-size: 2rem;
   margin-bottom: 1.5rem;
@@ -857,11 +1123,13 @@
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .infoTitle {
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 1rem;
 }
+
 .infoDesc {
   color: #a1a1aa;
   line-height: 1.6;
@@ -884,6 +1152,65 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-right: 0.5rem;
+}
+
+.glassCalendar {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  border-radius: 1.25rem;
+  margin: 0.5rem 0;
+  width: 100%;
+  max-width: 260px;
+}
+
+.calGridHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.6rem;
+}
+
+.calGridHeader span {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #475569;
+  text-align: center;
+}
+
+.calGridBody {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calGridDay {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.calInRange {
+  background: rgba(123, 59, 237, 0.1);
+  color: #fff;
+}
+
+.calToday {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  font-weight: 800;
+}
+
+.calDeadline {
+  background: #ff0844 !important;
+  color: #fff !important;
+  font-weight: 800;
+  box-shadow: 0 0 10px rgba(255, 8, 68, 0.4);
 }
 
 .themeToggleBtn:hover {
@@ -910,30 +1237,36 @@
   color: #0f172a;
   font-weight: 800;
 }
+
 .lightMode .navLink {
   color: #475569;
   font-weight: 600;
 }
+
 .lightMode .navLink:hover,
 .lightMode .navLinkActive {
   color: #0f172a;
 }
+
 .lightMode .btnLogin {
   color: #0f172a;
   border-color: rgba(0, 0, 0, 0.1) !important;
   background: rgba(255, 255, 255, 0.5);
 }
+
 .lightMode .btnLogin:hover {
   background: rgba(255, 255, 255, 0.8);
   border-color: rgba(0, 0, 0, 0.2) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
 .lightMode .btnSignup {
   background: linear-gradient(135deg, #7b3bed, #00f2fe);
   color: #fff;
   box-shadow: 0 4px 12px rgba(123, 59, 237, 0.2);
   border: none;
 }
+
 .lightMode .btnSignup:hover {
   box-shadow: 0 8px 20px rgba(123, 59, 237, 0.35);
   transform: translateY(-2px);
@@ -945,6 +1278,7 @@
   color: #475569;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
+
 .lightMode .themeToggleBtn:hover {
   background: #fff;
   transform: scale(1.05);
@@ -996,9 +1330,11 @@
   color: #475569;
   font-weight: 600;
 }
+
 .lightMode .fcTitle {
   color: #1e293b;
 }
+
 .lightMode .btnCta,
 .lightMode .btnPrimaryDark {
   background: linear-gradient(135deg, #7b3bed, #00f2fe);
@@ -1006,6 +1342,7 @@
   box-shadow: 0 8px 24px rgba(123, 59, 237, 0.25);
   border: none;
 }
+
 .lightMode .btnCta:hover,
 .lightMode .btnPrimaryDark:hover {
   background: linear-gradient(135deg, #6a2fe0, #00d4ff);
@@ -1023,6 +1360,7 @@
   color: #64748b;
   opacity: 0.7;
 }
+
 .lightMode .tLogo:hover {
   color: #7b3bed;
   opacity: 1;
@@ -1034,6 +1372,7 @@
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
 }
+
 .lightMode .visualContentInner {
   background: #f8fafc;
 }
@@ -1043,6 +1382,7 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #0f172a;
 }
+
 .lightMode .inputField:focus {
   background: #ffffff;
   border-color: #7b3bed;
@@ -1057,37 +1397,37 @@
   opacity: 0.65;
   filter: none;
   background:
-    radial-gradient(
-      circle at 25% 25%,
+    radial-gradient(circle at 25% 25%,
       rgba(255, 255, 255, 0.9) 0%,
       rgba(255, 255, 255, 0.4) 20%,
-      transparent 50%
-    ),
+      transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(0, 242, 254, 0.3) 0%, transparent 50%),
-    radial-gradient(
-      circle at 50% 50%,
+    radial-gradient(circle at 50% 50%,
       rgba(123, 59, 237, 0.2) 0%,
       rgba(240, 248, 255, 0.8) 75%,
-      #fff 100%
-    );
+      #fff 100%);
   box-shadow:
     inset -30px -30px 60px rgba(0, 0, 0, 0.05),
     inset 30px 30px 60px rgba(255, 255, 255, 0.9),
     inset 0 0 40px rgba(123, 59, 237, 0.2),
     0 0 120px rgba(123, 59, 237, 0.15);
 }
+
 .lightMode .dustOverlay {
   opacity: 0.08;
   filter: invert(1);
 }
+
 .lightMode .gridBase {
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
 }
+
 .lightMode .starfield {
   opacity: 0;
 }
+
 .lightMode .pageContainer {
   background: transparent;
 }
@@ -1107,6 +1447,7 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
   color: #475569;
 }
+
 .lightMode .jobCard:hover .skillPill {
   background: rgba(123, 59, 237, 0.08);
   border-color: rgba(123, 59, 237, 0.2);
@@ -1122,16 +1463,20 @@
   .navBlock {
     padding: 2rem;
   }
+
   .featureRow,
   .featureRowReverse {
     gap: 3rem;
   }
+
   .heroTitle {
     font-size: 4.5rem;
   }
+
   .floatCardLeft {
     left: 2%;
   }
+
   .floatCardRight {
     right: 2%;
   }
@@ -1143,11 +1488,13 @@
     gap: 1.5rem;
     padding: 1.5rem;
   }
+
   .navLinks {
     flex-wrap: wrap;
     justify-content: center;
     gap: 1rem;
   }
+
   .navRight {
     width: 100%;
     justify-content: center;
@@ -1161,10 +1508,12 @@
     align-items: center;
     justify-content: flex-start;
   }
+
   .heroTitle {
     font-size: 3rem;
     padding: 0 1rem;
   }
+
   .heroSubtitle {
     font-size: 1rem;
     padding: 0 1.5rem;
@@ -1195,14 +1544,17 @@
     flex-direction: column;
     text-align: center;
   }
+
   .featureText h2 {
     font-size: 2.2rem;
   }
+
   .featureVisual {
     width: 100%;
     height: 300px;
     border-radius: 1.5rem;
   }
+
   .featureShowcase {
     padding: 4rem 1.5rem;
     gap: 5rem;
@@ -1211,6 +1563,7 @@
   .finalCtaSection {
     padding: 6rem 1.5rem;
   }
+
   .finalCtaSection h2 {
     font-size: 2.2rem;
   }
@@ -1218,6 +1571,7 @@
   .pageContainer {
     padding: 2rem 1.5rem;
   }
+
   .pageTitle {
     font-size: 2.2rem;
   }
@@ -1226,6 +1580,7 @@
   .jobsGrid {
     grid-template-columns: 1fr;
   }
+
   .portalGrid {
     grid-template-columns: 1fr;
   }
@@ -1233,6 +1588,7 @@
   .mockBarChart {
     padding-top: 1rem;
   }
+
   .loginModalCard {
     padding: 2rem;
     margin: 1rem;
@@ -1243,15 +1599,18 @@
   .heroTitle {
     font-size: 2.5rem;
   }
+
   .tLogo {
     font-size: 1.2rem;
   }
+
   .tickerSection p {
     font-size: 0.65rem;
     padding: 0 1rem;
     text-align: center;
     line-height: 1.4;
   }
+
   .btnCta {
     padding: 1rem 2rem;
     width: 100%;
